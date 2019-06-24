@@ -1,3 +1,5 @@
+from itertools import product
+
 def readInputs(qtdClau):
     inputs = []
     for i in range(qtdClau):
@@ -24,42 +26,55 @@ def readVariables(clauses,qtdVar):
     return variables
 
 def readFormula():
-    qtd = (input().split())
-    inputs = readInputs(int(qtd[2]))
+    qtd = input().split()
+    inputs = readInputs(int(qtd[3]))
     clauses = readClauses(inputs)
-    variables = readVariables(clauses,int(qtd[3]))
+    variables = readVariables(clauses,int(qtd[2]))
     result = {'clauses':clauses, 'variables':variables}
     return result
 
-def nextAssignment(currentAssignment):
-    nextAssignment = []
-    return nextAssignment
+def nextAssignment(currentAssignment, total):
+    lista = tuple(product([True,False], repeat = len(currentAssignment)))
+    return list(lista[total])
 
 def doSolve(clauses, assignment):
     isSat = False
     formula = []
     total = 0
-    while (not isSat) or (total < 2 ** len(assignment)):
+
+    while (not isSat):
+        formula = []
+
         for i in range(len(clauses)):
-            adFor = [False]
+            for j in range(len(clauses[i])):
+                if(int(clauses[i][j]) < 0):
+                    assignment[int(clauses[i][j])] = not assignment[int(clauses[i][j])]
+
+        print(assignment)
+                    
+        for i in range(len(clauses)):
+            adFor = False
             for j in range(len(clauses[i]) - 1):
-                if(assignment[clauses[i][j] - 1] or assignment[(clauses[i][j + 1]) - 1] == True):
-                    adFor[0] = True
+                if(assignment[abs(int(clauses[i][j])) - 1] or assignment[abs(int(clauses[i][j + 1])) - 1] == True):
+                    adFor = True
                     break
             formula.append(adFor)
+        print("Formula {}".format(total + 1), formula)
 
         for k in range(len(formula) - 1):
             if(formula[k] == False):
+                isSat = False
                 break
             elif(formula[k] and formula[k + 1] == True):
                 isSat = True
 
         if(isSat == False): 
-            assignment = nextAssignment(assignment)
-
+            assignment = nextAssignment(assignment,total)
+        print(assignment)
         total += 1
 
     result = {'isSat': isSat, 'satisfyingAssignment': None}
+
     if (isSat):
         result['satisfyingAssignment'] = assignment
 
@@ -69,3 +84,5 @@ def solve():
     formula = readFormula()
     result = doSolve(formula['clauses'], formula['variables'])
     return result
+
+print(solve())
