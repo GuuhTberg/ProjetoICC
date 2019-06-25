@@ -34,15 +34,38 @@ def readFormula():
     return result
 
 def nextAssignment(currentAssignment, total):
-    lista = tuple(product([True,False], repeat = len(currentAssignment)))
-    return list(lista[total])
+    string = ''
+    for i in range(len(currentAssignment)):
+        if(currentAssignment[i] == True):
+            currentAssignment[i] = '1'
+            print(currentAssignment)
+        else:
+            currentAssignment[i] = '0'
+            print(currentAssignment)
+
+    for i in range(len(currentAssignment)):
+        string = string + currentAssignment[i]
+
+    decimal = int(string,2)
+    print(decimal)
+    decimal += 1
+    print(decimal)
+    string = bin(decimal)[2:].zfill(len(currentAssignment))
+        
+    for i in range(len(string)):
+        if(int(string[i]) > 0):
+            currentAssignment[i] = True
+        else:
+            currentAssignment[i] = False
+
+    return currentAssignment
 
 def doSolve(clauses, assignment):
     isSat = False
     formula = []
     total = 0
 
-    while (not isSat):
+    while (not isSat and 2 ** len(assignment)):
         formula = []
 
         for i in range(len(clauses)):
