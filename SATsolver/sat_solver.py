@@ -1,9 +1,7 @@
-from itertools import product
-
 def readInputs(qtdClau):
     inputs = []
     for i in range(qtdClau):
-        var = input("Clausula {}: ".format(i + 1)).split()
+        var = input().split()
         inputs.append(var)
     return inputs
 
@@ -38,18 +36,14 @@ def nextAssignment(currentAssignment, total):
     for i in range(len(currentAssignment)):
         if(currentAssignment[i] == True):
             currentAssignment[i] = '1'
-            print(currentAssignment)
         else:
             currentAssignment[i] = '0'
-            print(currentAssignment)
 
     for i in range(len(currentAssignment)):
         string = string + currentAssignment[i]
 
     decimal = int(string,2)
-    print(decimal)
     decimal += 1
-    print(decimal)
     string = bin(decimal)[2:].zfill(len(currentAssignment))
         
     for i in range(len(string)):
@@ -65,15 +59,14 @@ def doSolve(clauses, assignment):
     formula = []
     total = 0
 
-    while (not isSat and 2 ** len(assignment)):
+    while (not isSat and total < 2 ** len(assignment)):
         formula = []
 
-        for i in range(len(clauses)):
-            for j in range(len(clauses[i])):
-                if(int(clauses[i][j]) < 0):
-                    assignment[int(clauses[i][j])] = not assignment[int(clauses[i][j])]
-
-        print(assignment)
+        if(total > 0):
+            for i in range(len(clauses)):
+                for j in range(len(clauses[i])):
+                    if(int(clauses[i][j]) < 0):
+                        assignment[int(clauses[i][j])] = not assignment[int(clauses[i][j])]
                     
         for i in range(len(clauses)):
             adFor = False
@@ -82,7 +75,6 @@ def doSolve(clauses, assignment):
                     adFor = True
                     break
             formula.append(adFor)
-        print("Formula {}".format(total + 1), formula)
 
         for k in range(len(formula) - 1):
             if(formula[k] == False):
@@ -93,7 +85,7 @@ def doSolve(clauses, assignment):
 
         if(isSat == False): 
             assignment = nextAssignment(assignment,total)
-        print(assignment)
+        
         total += 1
 
     result = {'isSat': isSat, 'satisfyingAssignment': None}
